@@ -1,51 +1,46 @@
 import React, { useState } from "react";
 import ItemForm from "./ItemForm";
+import Filter from "./Filter";
+import Item from "./Item";
 
-const ShoppingList = ({ items }) => {
+function ShoppingList({ items: initialItems }) {
+  const [items, setItems] = useState(initialItems);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchText, setSearchText] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
   };
 
-  const handleSearchChange = (search) => {
-    setSearchText(search);
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
   };
 
-  const itemsToDisplay = items.filter((item) => {
+  const filteredItems = items.filter((item) => {
     const categoryCondition =
       selectedCategory === "All" || item.category === selectedCategory;
-    const searchCondition = item.name
-      .toLowerCase()
-      .includes(searchText.toLowerCase());
-
+    const searchCondition = item.name.toLowerCase().includes(searchTerm.toLowerCase());
     return categoryCondition && searchCondition;
   });
 
-  const handleChange = (event) => {
-    setSearchText(event.target.value);
+  const handleItemFormSubmit = (newItem) => {
+    setItems([...items, newItem]); // Add the new item to the list
   };
 
   return (
     <div className="ShoppingList">
-      <ItemForm onCategoryChange={handleCategoryChange} onSearchChange={handleSearchChange} />
-      {/* Adding the input field in the ShoppingList */}
-      <input
-        id="name"
-        name="name"
-        type="text"
-        placeholder="Search..."
-        value={searchText}
-        onChange={handleChange}
+      <ItemForm onItemFormSubmit={handleItemFormSubmit} />
+      <Filter
+        onSearchChange={handleSearchChange}
+        onCategoryChange={handleCategoryChange}
       />
       <ul className="Items">
-        {itemsToDisplay.map((item) => (
-          <li key={item.id}>{item.name}</li>
+        {filteredItems.map((item) => (
+          <Item key={item.id} name={item.name} category={item.category} />
         ))}
       </ul>
     </div>
   );
-};
+}
 
 export default ShoppingList;

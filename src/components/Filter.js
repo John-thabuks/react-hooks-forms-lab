@@ -28,3 +28,6 @@ function Filter({ onCategoryChange, onSearchChange, search }) {
 }
 
 export default Filter;
+
+
+
